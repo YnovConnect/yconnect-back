@@ -5,6 +5,10 @@ const mongoose = require("mongoose");
 const app = new Koa();
 const router = new Router();
 
+
+
+
+
 // Configuration de la connexion à la base de données
 const dbConfig = {
   host: "squirrel.kilian-marmilliot.com",
@@ -16,7 +20,7 @@ const dbConfig = {
 
 // Initialisation de Mongoose avec la configuration de connexion
 mongoose.connect(
-  `mongodb://yconnect:yconnectAdminMdp@squirrel.kilian-marmilliot.com:27017/`,
+  `mongodb://yconnect:yconnectAdminMdp@squirrel.kilian-marmilliot.com:27017/yconnect?authSource=admin`,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
