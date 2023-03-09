@@ -71,6 +71,45 @@ const authentificationController = {
       ctx.body = { error: err.message };
     }
   },
+
+  // Créer une route pour le refresh token
+  async refreshToken(ctx) {
+    const token = ctx.cookies.get("token");
+
+    if (!token) {
+      ctx.status = 401; // Unauthorized
+      ctx.body = { error: "Vous n'êtes pas connecté." };
+      return;
+    }
+
+    try {
+      // Vérifier la validité du token actuel et récupérer le payload
+      const payload = jwt.verify(token, config.publicKey, {
+        algorithms: ["RS256"],
+      });
+
+      // Générer un nouveau token avec le même payload
+      const newToken = jwt.sign(payload, config.privateKey, {
+        algorithm: "RS256",
+        expiresIn: "15m", // optionnel, peut être différent de la durée du token original
+      });
+
+      // Envoyer le nouveau token dans un cookie sécurisé
+      ctx.cookies.set("token", newToken, { httpOnly: true, secure: true });
+
+      // Renvoyer le nouveau token dans le corps de la réponse JSON
+      ctx.body = { token: newToken };
+    } catch (error) {
+      // Le token actuel est invalide, renvoyer une erreur
+      ctx.throw(401, "Unauthorized");
+    }
+  },
+
+  // Créer une route pour la déconnexion d'un utilisateur
+  async logout(ctx) {
+    ctx.cookies.set("token", null, { httpOnly: true, secure: false });
+    ctx.body = { success: true };
+  },
 };
 
 export default authentificationController;
