@@ -1,13 +1,12 @@
 import Koa from "koa";
-import Router from "koa-router";
 import mongoose from "mongoose";
 import APIRouter from "./src/router.js";
 import bodyparser from "koa-bodyparser";
 import config from "./src/config/index.js";
 import cors from "@koa/cors";
+import isAuthenticated from "./src/middleware/isAuthentificated.js";
 
 const app = new Koa();
-const router = new Router();
 
 // Initialisation de Mongoose avec la configuration de connexion
 mongoose.connect(config.mongoUri, {
@@ -35,8 +34,10 @@ app.use(
 );
 app.use(APIRouter.allowedMethods());
 
+app.use(isAuthenticated);
 // Ajout du routeur à l'application Koa
 app.use(APIRouter.routes());
 
 // Démarrage du serveur sur le port 3000
 app.listen(3000, () => console.log("Le serveur écoute sur le port 3000"));
+//post créer une entité  -- put ou patch modifie
