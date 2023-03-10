@@ -1,5 +1,5 @@
 // Import des modèles Mongoose
-import User from "../models/User.js";
+import User from "../models/user.js";
 
 // Définition des fonctions du contrôleur
 const userController = {
