@@ -6,7 +6,7 @@ const userController = {
   // Récupération de tous les utilisateurs
   async getAllUsers(ctx) {
     try {
-      const users = await User.find();
+      const users = await User.find({}, { password: 0 });
       ctx.body = users;
     } catch (err) {
       ctx.status = 500;
@@ -18,7 +18,7 @@ const userController = {
   async getUserById(ctx) {
     const { id } = ctx.params;
     try {
-      const user = await User.findById(id);
+      const user = await User.findById(id, { password: 0 });
       if (user) {
         ctx.body = user;
       } else {

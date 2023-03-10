@@ -1,4 +1,3 @@
-import Router from "koa-router";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
@@ -63,7 +62,7 @@ const authentificationController = {
       const token = jwt.sign({ userId: user._id }, "my_secret_key");
 
       // Stocker le token JWT dans un cookie HTTP Only
-      ctx.cookies.set("token", token, { httpOnly: true, secure: false });
+      ctx.cookies.set("yconnect_access_token", token, { httpOnly: true, secure: false });
 
       ctx.body = { success: true };
     } catch (err) {
@@ -74,7 +73,7 @@ const authentificationController = {
 
   // Créer une route pour le refresh token
   async refreshToken(ctx) {
-    const token = ctx.cookies.get("token");
+    const token = ctx.cookies.get("yconnect_access_token");
 
     if (!token) {
       ctx.status = 401; // Unauthorized
@@ -95,7 +94,7 @@ const authentificationController = {
       });
 
       // Envoyer le nouveau token dans un cookie sécurisé
-      ctx.cookies.set("token", newToken, { httpOnly: true, secure: true });
+      ctx.cookies.set("yconnect_access_token", newToken, { httpOnly: true, secure: true });
 
       // Renvoyer le nouveau token dans le corps de la réponse JSON
       ctx.body = { token: newToken };
@@ -107,7 +106,7 @@ const authentificationController = {
 
   // Créer une route pour la déconnexion d'un utilisateur
   async logout(ctx) {
-    ctx.cookies.set("token", null, { httpOnly: true, secure: false });
+    ctx.cookies.set("yconnect_access_token", null, { httpOnly: true, secure: false });
     ctx.body = { success: true };
   },
 };
