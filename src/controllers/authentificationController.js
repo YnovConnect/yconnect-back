@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import User from "../models/User.js";
+import User from "../models/user.js";
 
 const authentificationController = {
   // Créer une route pour l'inscription d'un nouvel utilisateur
@@ -62,7 +62,10 @@ const authentificationController = {
       const token = jwt.sign({ userId: user._id }, "my_secret_key");
 
       // Stocker le token JWT dans un cookie HTTP Only
-      ctx.cookies.set("yconnect_access_token", token, { httpOnly: true, secure: false });
+      ctx.cookies.set("yconnect_access_token", token, {
+        httpOnly: true,
+        secure: false,
+      });
 
       ctx.body = { success: true };
     } catch (err) {
@@ -94,7 +97,10 @@ const authentificationController = {
       });
 
       // Envoyer le nouveau token dans un cookie sécurisé
-      ctx.cookies.set("yconnect_access_token", newToken, { httpOnly: true, secure: true });
+      ctx.cookies.set("yconnect_access_token", newToken, {
+        httpOnly: true,
+        secure: true,
+      });
 
       // Renvoyer le nouveau token dans le corps de la réponse JSON
       ctx.body = { token: newToken };
@@ -106,7 +112,10 @@ const authentificationController = {
 
   // Créer une route pour la déconnexion d'un utilisateur
   async logout(ctx) {
-    ctx.cookies.set("yconnect_access_token", null, { httpOnly: true, secure: false });
+    ctx.cookies.set("yconnect_access_token", null, {
+      httpOnly: true,
+      secure: false,
+    });
     ctx.body = { success: true };
   },
 };
