@@ -18,6 +18,12 @@ const roomSchema = new mongoose.Schema({
   description: {
     type: String,
   },
+  messages: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
 });
 
 const Room = mongoose.model("Room", roomSchema);
