@@ -67,7 +67,7 @@ const authentificationController = {
         secure: false,
       });
 
-      ctx.body = { success: true };
+      ctx.body = { success: true, yconnect_access_token: token };
     } catch (err) {
       ctx.status = 400; // Bad Request
       ctx.body = { error: err.message };
