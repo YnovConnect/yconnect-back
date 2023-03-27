@@ -10,10 +10,8 @@ import convert from "koa-convert";
 import swaggerJSDoc from "swagger-jsdoc";
 import mount from "koa-mount";
 import websockify from "koa-websocket";
-import WebSocket from "ws";
 
 const app = websockify(new Koa());
-const ws = new WebSocket("ws://localhost:3000");
 
 // Initialisation de Mongoose avec la configuration de connexion
 mongoose.connect(config.mongoUri, {
@@ -59,21 +57,6 @@ app.use(convert(mount("/swagger", swaggerUi.setup(swaggerSpec))));
 app.use(APIRouter.allowedMethods());
 app.use(isAuthenticated);
 app.use(APIRouter.routes());
-
-ws.on("message", (msg) => {
-  console.log("Received message:", msg.toString());
-});
-
-ws.on("close", () => {
-  console.log("Disconnected from server");
-});
-
-app.ws.use((ctx, next) => {
-  console.log("A user connected");
-  ctx.websocket.send("Welcome!");
-
-  return next();
-});
 
 // Démarrage du serveur sur le port 3000
 app.listen(3000, () => console.log("Le serveur écoute sur le port 3000"));
