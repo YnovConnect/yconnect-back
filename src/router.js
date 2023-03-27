@@ -10,9 +10,9 @@ router.get("/", async (ctx) => {
   ctx.body = "Hello World!";
 });
 
-router.use("/users", userRoute.routes());
+router.use("/api/users", userRoute.routes());
 router.use("/api", authentificationRoute.routes());
-router.use("/rooms", roomRoute.routes());
-router.use("/rooms/:id/messages", messageRoute.routes());
+router.use("/api/rooms", roomRoute.routes());
+router.use("/api/rooms/:id/messages", messageRoute.routes());
 
 export default router;
