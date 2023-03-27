@@ -1,5 +1,6 @@
 import Message from "../models/message.js";
 import Room from "../models/room.js";
+import { io } from "../config/server.js";
 
 const messageController = {
   // Create message in a room
@@ -17,6 +18,12 @@ const messageController = {
 
       await room.save();
       await message.save();
+
+      io.to(room._id.toString()).emit("message", {
+        roomId: room._id.toString(),
+        message: message,
+      });
+
       ctx.status = 201;
       ctx.body = message;
     } catch (err) {

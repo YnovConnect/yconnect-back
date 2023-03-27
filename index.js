@@ -6,11 +6,12 @@ import config from "./src/config/index.js";
 import cors from "@koa/cors";
 import isAuthenticated from "./src/middleware/isAuthentificated.js";
 import swaggerUi from "swagger-ui-koa";
-import convert from 'koa-convert';
-import swaggerJSDoc from 'swagger-jsdoc';
-import mount from 'koa-mount';
+import convert from "koa-convert";
+import swaggerJSDoc from "swagger-jsdoc";
+import mount from "koa-mount";
+import websockify from "koa-websocket";
 
-const app = new Koa();
+const app = websockify(new Koa());
 
 // Initialisation de Mongoose avec la configuration de connexion
 mongoose.connect(config.mongoUri, {
@@ -38,21 +39,20 @@ app.use(
 );
 
 const options = {
-    swaggerDefinition: {
-        info: {
-            title: 'API', // Title (required)
-            version: '2.0.0', // Version (required)
-        },
+  swaggerDefinition: {
+    info: {
+      title: "API", // Title (required)
+      version: "2.0.0", // Version (required)
     },
-    apis: [
-        './src/routes/*.js', // Path to the API docs from root
-    ],
+  },
+  apis: [
+    "./src/routes/*.js", // Path to the API docs from root
+  ],
 };
 // Initialize swagger-jsdoc -> returns validated swagger spec in json format
 const swaggerSpec = swaggerJSDoc(options);
 app.use(swaggerUi.serve); //serve swagger static files
-app.use(convert(mount('/swagger', swaggerUi.setup(swaggerSpec))));
-
+app.use(convert(mount("/swagger", swaggerUi.setup(swaggerSpec))));
 
 app.use(APIRouter.allowedMethods());
 app.use(isAuthenticated);
@@ -60,4 +60,3 @@ app.use(APIRouter.routes());
 
 // Démarrage du serveur sur le port 3000
 app.listen(3000, () => console.log("Le serveur écoute sur le port 3000"));
-//post créer une entité  -- put ou patch modifie
