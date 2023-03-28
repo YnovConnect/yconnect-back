@@ -18,6 +18,13 @@ const roomSchema = new mongoose.Schema({
   description: {
     type: String,
   },
+  idUsers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+  ],
   messages: [
     {
       type: mongoose.Schema.Types.ObjectId,
