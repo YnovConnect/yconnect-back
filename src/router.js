@@ -12,6 +12,7 @@ router.get("/", async (ctx) => {
 
 router.use("/api/users", userRoute.routes());
 router.use("/api", authentificationRoute.routes());
+router.use("/api/upload", uploadFile.routes());
 router.use("/api/rooms", roomRoute.routes());
 router.use("/api/rooms/:id/messages", messageRoute.routes());
 

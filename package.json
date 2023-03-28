@@ -21,8 +21,10 @@
   "homepage": "https://github.com/YnovConnect/yconnect-back#readme",
   "dependencies": {
     "@koa/cors": "^4.0.0",
+    "@koa/multer": "^3.0.2",
     "bcryptjs": "^2.4.3",
     "http": "^0.0.1-security",
+    "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.0",
     "koa": "^2.14.1",
     "koa-bodyparser": "^4.3.0",
@@ -35,6 +37,7 @@
     "nodemon": "^2.0.21",
     "socket.io": "^4.6.1",
     "socket.io-client": "^4.6.1",
+    "path": "^0.12.7",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-koa": "^0.0.1"
   },

@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/user.js";
+import config from "../config/index.js";
 
 const authentificationController = {
   // Créer une route pour l'inscription d'un nouvel utilisateur
@@ -59,7 +60,7 @@ const authentificationController = {
       }
 
       // Générer un token JWT
-      const token = jwt.sign({ userId: user._id }, "my_secret_key");
+      const token = jwt.sign({ userId: user._id }, config.secretToken);
 
       // Stocker le token JWT dans un cookie HTTP Only
       ctx.cookies.set("yconnect_access_token", token, {
@@ -67,7 +68,8 @@ const authentificationController = {
         secure: false,
       });
 
-      ctx.body = { success: true, yconnect_access_token: token };
+      user.password = null;
+      ctx.body = { success: true, yconnect_access_token: token, user: user };
     } catch (err) {
       ctx.status = 400; // Bad Request
       ctx.body = { error: err.message };
