@@ -10,6 +10,7 @@ import convert from 'koa-convert';
 import swaggerJSDoc from 'swagger-jsdoc';
 import mount from 'koa-mount';
 
+
 const app = new Koa();
 
 // Initialisation de Mongoose avec la configuration de connexion
@@ -61,3 +62,6 @@ app.use(APIRouter.routes());
 // Démarrage du serveur sur le port 3000
 app.listen(3000, () => console.log("Le serveur écoute sur le port 3000"));
 //post créer une entité  -- put ou patch modifie
+
+
+

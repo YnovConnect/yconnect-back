@@ -1,50 +1,65 @@
-import multer from 'multer';
+import File from "../models/file.js";
+import Room from "../models/room.js";
+import fs from "fs";
 
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'static/profiles/')
-    },
-    filename: function (req, file, cb) {
-        const extension = path.extname(file.originalname).toLowerCase();
-        const uniqueSuffix = req.currentUserId + extension;
-        cb(null, file.fieldname + '-' + uniqueSuffix)
-    }
-})
+const uploadController = {
+    async uploadFile (ctx) {
+        try {
+            const {conversationId, type} = ctx.request.body;
 
 
-const uploadImage = multer({
-    fileFilter: (req, file, callback) => {
-        const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+            if(conversationId == null && type !== "avatar") {
+                ctx.throw(400, "Conversation id is required ou type is not avatar");
 
-        const extension = path.extname(file.originalname).toLowerCase();
+            }
 
-        if (allowedMimeTypes.includes(file.mimetype) && allowedExtensions.includes(extension)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Invalid file type. Only JPEG, PNG and GIF are allowed.'));
+            if(conversationId != null ) {
+                const room = await Room.findById(ctx.params.id);
+                if (!room) {
+                    ctx.throw(404, "room not found");
+                }
+                // todo check if user is part of the conversation
+            }
+
+            const {originalname, filename} = ctx.request.file;
+            const createdBy = ctx.userId;
+            const newFile = await File.create({
+                originalName: originalname,
+                fileName: filename,
+                conversationId: conversationId,
+                createdBy: createdBy,
+                type:type
+            });
+            ctx.body = {
+                file: newFile
+            };
+        } catch (err) {
+            ctx.throw(err.status || 500, err.message);
         }
-    }, storage: storage
-});
+    },
+    async getFileById(ctx) {
+        const filename = ctx.params.idFile;
+        if(!filename) {
+            ctx.throw(400, "file id is required");
+        }
 
-const uploadImageProfile = async (req, res) => {
-    try {
+        const file = await File.findById(filename);
+        if (file == null) {
+            ctx.throw(404, "file not found in database");
+        }
 
-        return res.status(200).send({filename: req?.file?.filename});
-    } catch (err) {
-        res.status(500).send({ message: err.message });
+        const filePath = `./uploads/${file.fileName}`;
+
+        if (fs.existsSync(filePath)) {
+            ctx.body = fs.createReadStream(filePath);
+            ctx.attachment(file.originalName);
+        } else {
+            ctx.throw(404, "file not found in server");
+        }
     }
+
 }
 
-const uploadBackgroundProfile = async (req, res) => {
-    try {
-        return res.status(200).send({filename: req?.file?.filename});
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
-}
-export default {
-    uploadImageProfile,
-    uploadBackgroundProfile,
-}
+
+export default uploadController;

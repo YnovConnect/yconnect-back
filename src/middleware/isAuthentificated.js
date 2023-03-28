@@ -1,28 +1,29 @@
 import jwt from "jsonwebtoken";
+import config from "../config/index.js";
 
 const isAuthenticated = async (ctx, next) => {
-    const token = ctx.cookies.get('yconnect_access_token');
-    if(ctx.request.url === '/api/login'
-        || ctx.request.url === '/api/register'
-        || ctx.request.url === '/api/logout'
-        || ctx.request.url === '/api/refresh'
-        || ctx.request.url === '/swagger') {
+    const apiRoutes = [ '/api/login', '/api/register', '/api/logout', '/api/refresh', '/swagger' ];
+    if(apiRoutes.includes(ctx.request.url)) {
         await next();
         return;
     }
-
+    const token = ctx.header.authorization != null ? ctx.header.authorization.split(" ")[1] : null;
     if (!token) {
         return ctx.status = 403;
     }
 
-    jwt.verify(token,"my_secret_key", (err, decoded) => {
-        if (err) {
-            return ctx.status = 401;
-        }
-        ctx.userId = decoded.userId;
 
-    });
-    await next();
+    let jwtRetour = null;
+    try {
+        jwtRetour = jwt.verify(token, config.secretToken);
+    } catch (err) {
+        return ctx.status = 401;
+    }
+    if(jwtRetour) {
+      ctx.userId = jwtRetour.userId;
+      await next();
+    }
+
 }
 
 
