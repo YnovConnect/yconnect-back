@@ -3,6 +3,7 @@ import authentificationRoute from "./routes/authentification.js";
 import roomRoute from "./routes/room.js";
 import messageRoute from "./routes/message.js";
 import Router from "koa-router";
+import uploadFile from "./routes/uploadFile.js";
 
 const router = new Router();
 
