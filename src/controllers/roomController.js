@@ -3,9 +3,16 @@ import Room from "../models/room.js";
 const roomController = {
   // Create a room
   async createRooms(ctx) {
-    const { name, userCreate, privateRoom, description } = ctx.request.body;
+    const { name, userCreate, privateRoom, description, idUsers } =
+      ctx.request.body;
     try {
-      const room = new Room({ name, userCreate, privateRoom, description });
+      const room = new Room({
+        name,
+        userCreate,
+        privateRoom,
+        description,
+        idUsers,
+      });
 
       await room.save();
       ctx.body = room;
@@ -62,6 +69,38 @@ const roomController = {
       if (!room) {
         ctx.throw(404, "room not found");
       }
+      ctx.body = room;
+    } catch (err) {
+      ctx.throw(400, err.message);
+    }
+  },
+
+  // add users to a room
+  async addUsersToRoom(ctx) {
+    try {
+      const room = await Room.findById(ctx.params.id);
+      if (!room) {
+        ctx.throw(404, "room not found");
+      }
+      const { idUsers } = ctx.request.body;
+      room.idUsers.push(idUsers);
+      await room.save();
+      ctx.body = room;
+    } catch (err) {
+      ctx.throw(400, err.message);
+    }
+  },
+
+  // remove users from a room
+  async removeUsersFromRoom(ctx) {
+    try {
+      const room = await Room.findById(ctx.params.id);
+      if (!room) {
+        ctx.throw(404, "room not found");
+      }
+      const { idUsers } = ctx.request.body;
+      room.idUsers.pull(idUsers);
+      await room.save();
       ctx.body = room;
     } catch (err) {
       ctx.throw(400, err.message);
