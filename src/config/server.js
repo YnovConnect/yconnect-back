@@ -2,6 +2,7 @@ import { Server } from "socket.io";
 import { io as client } from "socket.io-client";
 import { createServer } from "http";
 import jwt from "jsonwebtoken";
+import config from "../config/index.js";
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
@@ -13,7 +14,7 @@ const io = new Server(httpServer, {
 });
 
 httpServer.listen(3001, () => {
-  console.log("Serveur WebSocket démarré sur le port 3000");
+  console.log("Serveur WebSocket démarré sur le port 3001");
 });
 
 function authenticateSocket(socket, next) {
@@ -22,7 +23,7 @@ function authenticateSocket(socket, next) {
     return next(new Error("Authentication error: no token provided"));
   }
 
-  jwt.verify(token, "my_secret_key", (err, decoded) => {
+  jwt.verify(token, config.secretToken, (err, decoded) => {
     if (err) {
       return next(new Error("Authentication error: invalid token"));
     }
@@ -53,6 +54,7 @@ io.on("connection", (socket) => {
   socket.on("message", (data) => {
     const { roomId, message } = data;
     io.to(roomId).emit("message", message);
+    console.log("message", message);
   });
 
   socket.on("disconnect", () => {
@@ -67,6 +69,6 @@ io.on("connection", (socket) => {
 //   console.log("Message : ", data);
 // });
 
-// // socket.emit("join", "640b046cb2a8393bf10f4414");
+// socket.emit("join", "640b046cb2a8393bf10f4414");
 
 export { io };
