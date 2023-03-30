@@ -24,8 +24,12 @@ const roomController = {
   // Get all rooms
   async getAllRooms(ctx) {
     try {
-      const rooms = await Room.find({}).populate("userCreate");
-      ctx.body = rooms;
+      ctx.body = await Room.find({
+        $or: [
+          {userCreate: ctx.userId}, // L'utilisateur est le créateur de la room
+          {idUsers: ctx.userId}    // L'utilisateur est membre de la room
+        ]
+      }).populate("userCreate");
     } catch (err) {
       ctx.throw(400, err.message);
     }
