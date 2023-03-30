@@ -35,7 +35,6 @@ const userController = {
   async createUser(ctx) {
     const { body } = ctx.request;
     try {
-      console.log(body);
       const user = await User.create(body);
       ctx.status = 201;
       ctx.body = user;

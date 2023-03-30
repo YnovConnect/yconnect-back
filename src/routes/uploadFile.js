@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({
     storage,
-    limits: { fileSize: 10 * 1024 * 1024 }, // limite de taille des fichiers à 10 Mo
+    limits: { fileSize: 20 * 1024 * 1024 }, // limite de taille des fichiers à 10 Mo
     fileFilter: function (req, file, cb) {
         req.file= file;
         const allowedMimes = [
@@ -33,21 +33,12 @@ const upload = multer({
             "application/pdf",
             "audio/mpeg",
             "audio/wav",
+            "audio/mp3",
         ];
-        const allowedExtensions = [
-            ".jpeg",
-            ".jpg",
-            ".pdf",
-            ".gif",
-            ".png",
-            ".bmp",
-            ".mp3",
-            ".wav",
-        ];
-        const extension = path.extname(file.originalname).toLowerCase();
+        const extension = file.mimetype.split("/")[1];
+        file.originalname = file.originalname + "." + extension;
 
         if (
-            !allowedExtensions.includes(extension) ||
             !allowedMimes.includes(file.mimetype)
         ) {
             return cb(new Error("Only pdf and image files are allowed!"));
