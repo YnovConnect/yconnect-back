@@ -6,38 +6,32 @@ import fs from "fs";
 const uploadController = {
     async uploadFile (ctx) {
         try {
-            const {conversationId, type} = ctx.request.body;
 
-
-            if(conversationId == null && type !== "avatar") {
-                ctx.throw(400, "Conversation id is required ou type is not avatar");
-
-            }
-
-            if(conversationId != null ) {
-                const room = await Room.findById(ctx.params.id);
-                if (!room) {
-                    ctx.throw(404, "room not found");
-                }
-                // todo check if user is part of the conversation
-            }
-
-            const {originalname, filename} = ctx.request.file;
+            const audio = ctx.request.body.audio;
+            const duration = ctx.request.body.duration;
+            const {originalname, mimetype, filename, size } = ctx.request.file;
+            const type = mimetype.split("/")[1];
+            const url = '/assets/' + filename;
             const createdBy = ctx.userId;
             const newFile = await File.create({
-                originalName: originalname,
+                name: originalname,
+                size: size,
+                type: type,
+                audio: audio,
+                duration: duration,
+                url: url,
                 fileName: filename,
-                conversationId: conversationId,
                 createdBy: createdBy,
-                type:type
             });
             ctx.body = {
                 file: newFile
             };
         } catch (err) {
+            console.log('err: ', err);
             ctx.throw(err.status || 500, err.message);
         }
     },
+
     async getFileById(ctx) {
         const filename = ctx.params.idFile;
         if(!filename) {

@@ -1,8 +1,33 @@
 import mongoose from "mongoose";
+import Message from "./message.js";
 
 
 const fileSchema = new mongoose.Schema({
-    originalName: {
+    name: {
+        type: String,
+        required: true,
+    },
+    size: {
+        type: Number,
+        required: false,
+    },
+    type: {
+        type: String,
+        required: false,
+    },
+    audio: {
+        type: Boolean,
+        required: false,
+    },
+    duration: {
+        type: Number,
+        required: false,
+    },
+    url: {
+        type: String,
+        required: true,
+    },
+    preview: {
         type: String,
         required: false,
     },
@@ -10,22 +35,13 @@ const fileSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    conversationId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "rooms",
-        required: false,
-    },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "users",
         required: true,
     },
-    type: {
-        type: String,
-        required: false,
-        default: "file",
-    },
     createdDate: { type: Date, default: Date.now },
 });
 
-export default mongoose.model("File", fileSchema);
+const File = mongoose.model("File", fileSchema);
+export default File;

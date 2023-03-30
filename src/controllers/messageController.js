@@ -6,12 +6,12 @@ const messageController = {
   // Create message in a room
   async createMessages(ctx) {
     try {
-      const room = await Room.findById(ctx.params.id);
+      const room = await Room.findById(ctx.params.id)
+
 
       if (!room) {
         ctx.throw(404, "Room not found");
       }
-
       const message = new Message(ctx.request.body);
 
       room.messages.push(message);
@@ -19,13 +19,16 @@ const messageController = {
       await room.save();
       await message.save();
 
+      // recherche le message dans la base de donnée et popule les fichiers
+      let messageWithFile = await Message.findById(message._id).populate("files");
+
       io.to(room._id.toString()).emit("message", {
         roomId: room._id.toString(),
-        message: message,
+        message: messageWithFile,
       });
 
       ctx.status = 201;
-      ctx.body = message;
+      ctx.body = messageWithFile;
     } catch (err) {
       ctx.throw(err.status || 500, err.message);
     }
@@ -34,7 +37,12 @@ const messageController = {
   // Get all messages in a room
   async getAllMessages(ctx) {
     try {
-      const room = await Room.findById(ctx.params.id).populate("messages");
+      const room = await Room.findById(ctx.params.id).populate({
+        path: "messages",
+        populate: {
+          path: "files"
+        }
+      });
       if (!room) {
         ctx.throw(404, "Room not found");
       }
@@ -48,7 +56,12 @@ const messageController = {
   // Get a single message in a room by ID
   async getMessagesById(ctx) {
     try {
-      const room = await Room.findById(ctx.params.id).populate("messages");
+      const room = await Room.findById(ctx.params.id).populate({
+        path: "messages",
+        populate: {
+          path: "files"
+        }
+      });
       if (!room) {
         ctx.throw(404, "Room not found");
       }
@@ -66,7 +79,12 @@ const messageController = {
   // Update a message in a room by ID
   async updateMessagesById(ctx) {
     try {
-      const room = await Room.findById(ctx.params.id).populate("messages");
+      const room = await Room.findById(ctx.params.id).populate({
+        path: "messages",
+        populate: {
+          path: "files"
+        }
+      });
       if (!room) {
         ctx.throw(404, "Room not found");
       }

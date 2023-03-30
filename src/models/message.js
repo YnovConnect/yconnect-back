@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const messageSchema = new mongoose.Schema({
   content: {
     type: String,
-    required: true,
+    required: false,
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -14,6 +14,13 @@ const messageSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  files: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "File",
+      required: false,
+    },
+  ],
 });
 
 const Message = mongoose.model("Message", messageSchema);

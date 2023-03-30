@@ -41,7 +41,6 @@ io.use((socket, next) => {
 io.on("connection", (socket) => {
   // join a room
   socket.on("join", (roomId) => {
-    console.log(roomId);
     socket.join(roomId);
   });
 
@@ -54,7 +53,6 @@ io.on("connection", (socket) => {
   socket.on("message", (data) => {
     const { roomId, message } = data;
     io.to(roomId).emit("message", message);
-    console.log("message", message);
   });
 
   socket.on("disconnect", () => {

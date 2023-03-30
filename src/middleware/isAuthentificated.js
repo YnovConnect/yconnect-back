@@ -3,7 +3,7 @@ import config from "../config/index.js";
 
 const isAuthenticated = async (ctx, next) => {
     const apiRoutes = [ '/api/login', '/api/register', '/api/logout', '/api/refresh', '/swagger' ];
-    if(apiRoutes.includes(ctx.request.url)) {
+    if(apiRoutes.includes(ctx.request.url) || ctx.request.url.startsWith('/assets/')) {
         await next();
         return;
     }

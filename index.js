@@ -11,8 +11,14 @@ import swaggerJSDoc from "swagger-jsdoc";
 import mount from "koa-mount";
 import websockify from "koa-websocket";
 
+import serve from 'koa-static-server'
+import path from 'path';
+
 const app = websockify(new Koa());
 
+
+
+//app.use("/static" ,serve(publicPath))
 // Initialisation de Mongoose avec la configuration de connexion
 mongoose.connect(config.mongoUri, {
   useNewUrlParser: true,
@@ -28,6 +34,8 @@ mongoose.connection.on("error", (err) => {
 mongoose.connection.once("open", () => {
   console.log("Connexion à la base de données établie avec succès");
 });
+app.use(serve({rootDir: 'uploads', rootPath: '/assets'}));
+
 
 app.use(bodyparser());
 app.use(
