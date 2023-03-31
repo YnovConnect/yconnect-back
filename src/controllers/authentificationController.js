@@ -62,7 +62,9 @@ const authentificationController = {
       }
 
       // Générer un token JWT
-      const token = jwt.sign({ userId: user._id }, config.secretToken);
+      const token = jwt.sign({ userId: user._id }, config.secretToken, {
+        expiresIn: "1h",
+      });
 
       // Stocker le token JWT dans un cookie HTTP Only
       ctx.cookies.set("yconnect_access_token", token, {
