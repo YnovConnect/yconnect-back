@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 import config from "../config/index.js";
+import Room from "../models/room.js";
 
 const authentificationController = {
   // Créer une route pour l'inscription d'un nouvel utilisateur
@@ -30,6 +31,7 @@ const authentificationController = {
         isdeleted: false,
       });
       await user.save();
+      await Room.findByIdAndUpdate("642699beae443e0cbe6b001d" , { $push: { idUsers: user._id } });
 
       ctx.body = { success: true };
     } catch (err) {
