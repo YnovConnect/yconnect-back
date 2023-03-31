@@ -20,7 +20,8 @@ const messageController = {
       await message.save();
 
       // recherche le message dans la base de donnée et popule les fichiers
-      let messageWithFile = await Message.findById(message._id).populate("files");
+      let messageWithFile = await Message.findById(message._id).populate('user')
+          .populate('files');
 
       io.to(room._id.toString()).emit("message", {
         roomId: room._id.toString(),
@@ -38,10 +39,11 @@ const messageController = {
   async getAllMessages(ctx) {
     try {
       const room = await Room.findById(ctx.params.id).populate({
-        path: "messages",
-        populate: {
-          path: "files"
-        }
+        path: 'messages',
+        populate: [
+          { path: 'user' },
+          { path: 'files' }
+        ]
       });
       if (!room) {
         ctx.throw(404, "Room not found");
@@ -58,9 +60,10 @@ const messageController = {
     try {
       const room = await Room.findById(ctx.params.id).populate({
         path: "messages",
-        populate: {
-          path: "files"
-        }
+        populate: [
+          { path: "User" }, // peupler l'objet "user"
+          { path: "files" } // peupler l'objet "files"
+        ]
       });
       if (!room) {
         ctx.throw(404, "Room not found");
